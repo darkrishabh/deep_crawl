@@ -11,5 +11,6 @@ else{
 include('crawler.php');
 
 $crawlObject = new Crawler($BASE);
-echo $crawlObject->start_crawl();
+echo ( $crawlObject->start_crawl());
+
 ?>

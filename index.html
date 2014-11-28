@@ -120,25 +120,34 @@ border: 2px solid #ccc;
 
     function ShowData(json){
       //Parse JSON here
-      console.log("Error is here");
+      
       var header = "";
       var html = "";
-      jQuery.each($.parseJSON(json), function(i, val) {
+      var counter = 0;
+
+      jQuery.each($.parseJSON(json), function(j, value) {
         //if the key is numeric, its a url
-        if(isNumeric(i)){
-          console.log("Link " + i + " has the value " + val);
-          if(i%3 == 0){
-            if(i!=0){
-              html+='</div>';
-            }
-            html+='<div class="row">';
-          }
-          html+='<div class="col-lg-4 col-sm-6"><div class="well">'+ val + '</div></div>';
-        }
-        else{
-          if(i == "Total_Links"){
-          header += '<div class="row"><div class="col col-lg-12 col-sm-12"><h1>Total Links found : '+ val +'</h1></div></div><hr>';
+        if(j=="unique"){
+          jQuery.each(value, function(i, val) {
+            
+            if(isNumeric(i)){
+              console.log("Link " + counter + " has the value " + val);
+              if(counter%3 == 0){
+                if(i!=0){
+                  html+='</div>';
                 }
+                html+='<div class="row">';
+              }
+              html+='<div class="col-lg-4 col-sm-6"><div class="well">'+ val + '</div></div>';
+            }
+            counter++;
+          });
+        }
+        if(j == "Total_Links"){
+        header += '<div class="row"><div class="col col-lg-12 col-sm-12"><h1>Total Links found : '+ value +'</h1></div></div><hr>';
+        }
+        if(j == "Unique_Links"){
+        header += '<div class="row"><div class="col col-lg-12 col-sm-12"><h1>Unique Links found : '+ value +'</h1></div></div><hr>';
         }
         
       });

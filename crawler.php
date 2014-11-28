@@ -7,14 +7,16 @@
 
 class Crawler{
 	private $BASE;
-	private $list;
+	public $list;
 	private $seen;
+	private $response;
 
 	public function Crawler($BASE){
 		//Initializing 
 		$this->BASE = $BASE;
 		$this->list = array();
 		$this->seen = array();
+		$this->response = array();
 	}
 
 	private function crawl_page($url){
@@ -42,7 +44,7 @@ class Crawler{
             	if(substr($href,0,strlen($this->BASE)) == $this->BASE){
 	            	//Adding the URL to the list, and making sure there are no duplicates.
 	                array_push($this->list, $href);
-	                $this->list = array_unique($this->list);
+	                
 	                //recursively calling the method to find deeper links
 	                $this->crawl_page($href);   
                 }  
@@ -86,8 +88,8 @@ class Crawler{
 	/*
 	 * Returns the JSON of the list of URLs Crawled
 	 */
-	public function getJSON(){
-		return json_encode($this->list);
+	public function getJSON($list){
+		return json_encode($list);
 	}
 
 	/*
@@ -100,8 +102,13 @@ class Crawler{
 	 * Add additional data to the list of URLs.
 	 */
 	public function add_extra_data(){
-		$this->list['Base_URL'] = $this->BASE;
-		$this->list['Total_Links'] = sizeof($this->list)-1;
+		$this->response['Base_URL'] = $this->BASE;
+		$this->response['Total_Links'] = sizeof($this->list);
+		$this->response['Unique_Links'] = sizeof($this->getUnique());
+	}
+
+	public function getUnique(){
+		return array_unique($this->list);
 	}
 
 	/*
@@ -112,10 +119,14 @@ class Crawler{
 		$this->crawl_page($this->BASE);
 		// Sort the list alphabetically
 		$this->getSorted();
+		//Create the response
+		$this->response['unique'] = $this->getUnique();
+		$this->response['all'] = $this->list;
 		// Add extra data
 		$this->add_extra_data();
-		// Return the json
-		return $this->getJSON();
+
+		return $this->getJSON($this->response);
+
 	}
 
 }
