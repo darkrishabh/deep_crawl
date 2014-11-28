@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>WebCrawler</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href="css/styles.css" rel="stylesheet">
+    <style>
+    .modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+.well{
+min-height: 20px;
+padding: 19px ;
+border-radius:15px !important;
+margin-bottom: 20px;
+background-color: rgba(179, 69, 69, 0.86) !important;
+border: 3px solid #893C3C !important;
+text-align: center;
+color: white !important;
+border-radius: 4px;
+-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+box-shadow: inset 14px 14px 16px rgba(0,0,0,0.05);
+}
+.navbar-inverse {
+background-color: #BA5C5C;
+color:white !important;
+}
+.navbar-inverse .navbar-brand {
+color: #fff;
+}
+body.loading {
+    overflow: hidden;   
+}
+body.loading .modal {
+    display: block;
+}
+.input-txt{
+  width: 500px;
+text-align: center;
+height: 50px;
+border-radius: 14px;
+border: 2px solid #ccc;
+}
+.input-btn{width: 100px;
+text-align: center;
+color: #555;
+position: relative;
+height: 51px;
+font-weight: bold;
+border-radius: 14px;
+border: 2px solid #ccc;
+}
+    </style>
+	</head>
+	<body>
+
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Rishabh Mehan</a>
+      
+    </div><!-- /.container -->
+</div><!-- /.navbar -->
+  
+<!-- HEADER 
+=================================-->
+
+<div class="jumbotron text-center">
+    <div class="container">
+      <div class="row">
+        <div class="col col-lg-12 col-sm-12">
+          <h1>Enter the URL to be crawled</h1>
+          <p>
+            <input type="text" placeholder = "Enter the URL here" id="URL" class="input-txt"> 
+            <input type="button" value = "Crawl" class = "btn input-btn" id="crawl">
+          </p>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- /header container-->
+
+<!-- CONTENT
+=================================-->
+<div class="container putData">
+
+    <div class="modal"></div>
+</div>
+<hr>
+<!-- /CONTENT ============-->
+
+	<!-- script references -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+    <script>
+    function isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function ShowData(json){
+      //Parse JSON here
+      console.log("Error is here");
+      var header = "";
+      var html = "";
+      jQuery.each($.parseJSON(json), function(i, val) {
+        //if the key is numeric, its a url
+        if(isNumeric(i)){
+          console.log("Link " + i + " has the value " + val);
+          if(i%3 == 0){
+            if(i!=0){
+              html+='</div>';
+            }
+            html+='<div class="row">';
+          }
+          html+='<div class="col-lg-4 col-sm-6"><div class="well">'+ val + '</div></div>';
+        }
+        else{
+          if(i == "Total_Links"){
+          header += '<div class="row"><div class="col col-lg-12 col-sm-12"><h1>Total Links found : '+ val +'</h1></div></div><hr>';
+                }
+        }
+        
+      });
+      html+='</div>';
+      html = header+html;
+      $("div.putData").html(html);
+    }
+    </script>
+    <script>
+    
+    $body = $("body");
+
+    $(document).on({
+        ajaxStart: function() { $body.addClass("loading");    },
+         ajaxStop: function() { $body.removeClass("loading"); }    
+    });
+    $("#crawl").click(function(){
+      var url_to = $("#URL").val();
+      if(url_to != "" || url_to.trim() != ""){
+        var response = $.ajax({
+          type: "GET",
+          url: "crawl.php",
+          data: "url="+url_to,
+          success: function(result){
+            console.log(result);
+            ShowData(result);
+          }
+        });
+      }
+    });
+    </script>
+	</body>
+</html>
